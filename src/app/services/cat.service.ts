@@ -20,7 +20,7 @@ export class CatService {
     return this.http.get<any[]>(url);
   }
 
-  getAllBreeds(): Observable<any[]> {
+  loadBreeds(): Observable<any[]> {
     const url = `${this.apiUrl}/breeds`;
     return this.http.get<any[]>(url);
   }

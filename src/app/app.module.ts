@@ -14,6 +14,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { CatSearchComponent } from './components/catSearch/cat-search/cat-search.component';
 import { CatResultsComponent } from './components/catResults/cat-results/cat-results.component';
 import { CatService } from './services/cat.service';
+import { StoreModule } from '@ngrx/store';
+import { catReducer } from './reducers/cat.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { CatEffects } from './effects/cat.effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({
   declarations: [AppComponent, CatSearchComponent, CatResultsComponent],
@@ -28,6 +33,9 @@ import { CatService } from './services/cat.service';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    StoreModule.forRoot({ cats: catReducer }),
+    EffectsModule.forRoot([CatEffects]),
+    StoreDevtoolsModule.instrument(),
   ],
   providers: [CatService],
   bootstrap: [AppComponent],

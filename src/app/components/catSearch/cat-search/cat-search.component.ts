@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { CatService } from '../../../services/cat.service';
+import { Store } from '@ngrx/store';
+import { CatState } from '../../../reducers/cat.reducer';
+import { loadBreeds, loadCats } from 'src/app/actions/cat.actions';
+import { selectBreeds } from 'src/app/selectors/cat.selectors';
 
 @Component({
   selector: 'app-cat-search',
@@ -14,7 +17,7 @@ export class CatSearchComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private catService: CatService
+    private store: Store<CatState>
   ) {}
 
   ngOnInit(): void {
@@ -23,17 +26,22 @@ export class CatSearchComponent implements OnInit {
       resultCount: 10,
     });
 
-    this.searchCats();
+    this.store.dispatch(loadCats());
+    this.store.dispatch(loadBreeds());
+
+    this.store.select(selectBreeds).subscribe((breeds) => {
+      console.log(breeds);
+      this.breeds = breeds;
+    });
   }
 
   searchCats(): void {
-    this.catService.getAllBreeds().subscribe((res) => {
-      this.breeds = res;
-    });
-
-    this.catService.loadCats().subscribe((res) => {
-      console.log(res);
-    });
+    // this.catService.getAllBreeds().subscribe((res) => {
+    //   this.breeds = res;
+    // });
+    // this.catService.loadCats().subscribe((res) => {
+    //   console.log(res);
+    // });
   }
 
   resetFilters(): void {
