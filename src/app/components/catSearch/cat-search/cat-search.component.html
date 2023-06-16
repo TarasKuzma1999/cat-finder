@@ -1,0 +1,26 @@
+<form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="fill" class="form-field">
+    <mat-label>Виберіть породи котів:</mat-label>
+    <mat-select multiple formControlName="selectedBreeds" id="selectedBreeds">
+      <mat-option *ngFor="let breed of breeds" [value]="breed.id">{{
+        breed.name
+      }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="form-field">
+    <mat-label>Кількість котів для відображення:</mat-label>
+    <input
+      matInput
+      type="number"
+      formControlName="resultCount"
+      id="resultCount"
+    />
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit">Пошук</button>
+  <button mat-raised-button type="button" (click)="resetFilters()">
+    Скинути
+  </button>
+</form>
+<button mat-button>Basic</button>
