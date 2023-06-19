@@ -1,20 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { Store } from '@ngrx/store';
 import { CatState } from '../../../reducers/cat.reducer';
 import { loadBreeds, loadCats, searchCats } from 'src/app/actions/cat.actions';
-import { isLoading, selectBreeds } from 'src/app/selectors/cat.selectors';
+import { selectBreeds } from 'src/app/selectors/cat.selectors';
 import { Breed } from 'src/app/interfaces/breed.interface';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-cat-search',
   templateUrl: './cat-search.component.html',
   styleUrls: ['./cat-search.component.scss'],
 })
-export class CatSearchComponent implements OnInit {
+export class CatSearchComponent implements OnInit, OnDestroy {
   searchForm!: FormGroup;
   breeds: Breed[] = [];
+
+  private unsubscribe$: Subject<void> = new Subject();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -30,9 +33,12 @@ export class CatSearchComponent implements OnInit {
     this.store.dispatch(loadCats({ count: this.searchForm.value.count }));
     this.store.dispatch(loadBreeds());
 
-    this.store.select(selectBreeds).subscribe((breeds) => {
-      this.breeds = breeds;
-    });
+    this.store
+      .select(selectBreeds)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((breeds) => {
+        this.breeds = breeds;
+      });
   }
 
   resetFilters(): void {
@@ -46,5 +52,10 @@ export class CatSearchComponent implements OnInit {
     } else {
       this.store.dispatch(loadCats({ count: this.searchForm.value.count }));
     }
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

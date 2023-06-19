@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { CatState } from '../../../reducers/cat.reducer';
-import { isLoading, selectCats } from 'src/app/selectors/cat.selectors';
+import { selectCats } from 'src/app/selectors/cat.selectors';
 import { Cat } from 'src/app/interfaces/cat.interface';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-cat-results',
@@ -12,11 +13,21 @@ import { Cat } from 'src/app/interfaces/cat.interface';
 export class CatResultsComponent implements OnInit {
   selectedCats: Cat[] = [];
 
+  private unsubscribe$: Subject<void> = new Subject();
+
   constructor(private store: Store<CatState>) {}
 
   ngOnInit(): void {
-    this.store.select(selectCats).subscribe((cats) => {
-      this.selectedCats = cats;
-    });
+    this.store
+      .select(selectCats)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((cats) => {
+        this.selectedCats = cats;
+      });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }
