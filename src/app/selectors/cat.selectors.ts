@@ -12,3 +12,8 @@ export const selectBreeds = createSelector(
   selectCatState,
   (state: CatState) => state.breeds
 );
+
+export const isLoading = createSelector(
+  selectCatState,
+  (state: CatState) => state.loading
+);

@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { Store } from '@ngrx/store';
 import { CatState } from '../../../reducers/cat.reducer';
-import { loadBreeds, loadCats } from 'src/app/actions/cat.actions';
-import { selectBreeds } from 'src/app/selectors/cat.selectors';
+import { loadBreeds, loadCats, searchCats } from 'src/app/actions/cat.actions';
+import { isLoading, selectBreeds } from 'src/app/selectors/cat.selectors';
+import { Breed } from 'src/app/interfaces/breed.interface';
 
 @Component({
   selector: 'app-cat-search',
@@ -13,7 +14,7 @@ import { selectBreeds } from 'src/app/selectors/cat.selectors';
 })
 export class CatSearchComponent implements OnInit {
   searchForm!: FormGroup;
-  breeds: any[] = [];
+  breeds: Breed[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -23,32 +24,27 @@ export class CatSearchComponent implements OnInit {
   ngOnInit(): void {
     this.searchForm = this.formBuilder.group({
       selectedBreeds: [],
-      resultCount: 10,
+      count: 10,
     });
 
-    this.store.dispatch(loadCats());
+    this.store.dispatch(loadCats({ count: this.searchForm.value.count }));
     this.store.dispatch(loadBreeds());
 
     this.store.select(selectBreeds).subscribe((breeds) => {
-      console.log(breeds);
       this.breeds = breeds;
     });
   }
 
-  searchCats(): void {
-    // this.catService.getAllBreeds().subscribe((res) => {
-    //   this.breeds = res;
-    // });
-    // this.catService.loadCats().subscribe((res) => {
-    //   console.log(res);
-    // });
-  }
-
   resetFilters(): void {
-    this.searchForm.reset({ resultCount: 10 });
+    this.searchForm.reset({ selectedBreeds: [], count: 10 });
+    this.store.dispatch(loadCats({ count: this.searchForm.value.count }));
   }
 
-  onSubmit() {
-    console.log(this.searchForm);
+  searchCats() {
+    if (this.searchForm?.value?.selectedBreeds?.length) {
+      this.store.dispatch(searchCats(this.searchForm.value));
+    } else {
+      this.store.dispatch(loadCats({ count: this.searchForm.value.count }));
+    }
   }
 }

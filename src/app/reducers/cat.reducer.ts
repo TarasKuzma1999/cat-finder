@@ -6,13 +6,18 @@ import {
   loadBreeds,
   loadBreedsSuccess,
   loadBreedsFailure,
+  searchCats,
+  searchCatsSuccess,
+  searchCatsFailure,
 } from '../actions/cat.actions';
+import { Cat } from '../interfaces/cat.interface';
+import { Breed } from '../interfaces/breed.interface';
 
 export interface CatState {
-  cats: any[];
-  breeds: any[];
+  cats: Cat[];
+  breeds: Breed[];
   loading: boolean;
-  error: any;
+  error: string | null;
 }
 
 export const initialState: CatState = {
@@ -43,6 +48,18 @@ export const catReducer = createReducer(
     loading: false,
   })),
   on(loadBreedsFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
+
+  on(searchCats, (state) => ({ ...state, loading: true, error: null })),
+  on(searchCatsSuccess, (state, { cats }) => ({
+    ...state,
+    cats,
+    loading: false,
+  })),
+  on(searchCatsFailure, (state, { error }) => ({
     ...state,
     error,
     loading: false,

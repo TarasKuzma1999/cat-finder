@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 
-export const loadCats = createAction('[Cat] Load Cats');
+export const loadCats = createAction('[Cat] Load Cats', props<{count:number}>());
 export const loadCatsSuccess = createAction(
   '[Cat] Load Cats Success',
   props<{ cats: any[] }>()
@@ -17,5 +17,18 @@ export const loadBreedsSuccess = createAction(
 );
 export const loadBreedsFailure = createAction(
   '[Cat] Load Breeds Failure',
+  props<{ error: any }>()
+);
+
+export const searchCats = createAction(
+  '[Cat] Search Cats',
+  props<{ selectedBreeds: string[], count: number }>()
+);
+export const searchCatsSuccess = createAction(
+  '[Cat] Search Cats Success',
+  props<{ cats: any[] }>()
+);
+export const searchCatsFailure = createAction(
+  '[Cat] Search Cats Failure',
   props<{ error: any }>()
 );

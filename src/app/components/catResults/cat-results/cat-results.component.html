@@ -1,1 +1,10 @@
-<p>cat-results works!</p>
+<div *ngIf="selectedCats.length; else nothingToShow" class="cat-list-container">
+  <mat-card *ngFor="let cat of selectedCats" class="cat-card">
+    <img mat-card-image [src]="cat.url" [alt]="cat.id" mat-card-image />
+    <mat-card-content>
+      <mat-card-title>{{ cat.breeds?.[0]?.name || "N/A" }}</mat-card-title>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<ng-template #nothingToShow><p>Нічого не знайдено</p></ng-template>

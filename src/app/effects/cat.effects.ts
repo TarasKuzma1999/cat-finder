@@ -10,6 +10,9 @@ import {
   loadBreedsSuccess,
   loadBreedsFailure,
   loadBreeds,
+  searchCats,
+  searchCatsSuccess,
+  searchCatsFailure,
 } from '../actions/cat.actions';
 
 @Injectable()
@@ -19,8 +22,8 @@ export class CatEffects {
   loadCats$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadCats),
-      mergeMap(() =>
-        this.catService.loadCats().pipe(
+      mergeMap(({ count }) =>
+        this.catService.loadCats(count).pipe(
           map((cats) => loadCatsSuccess({ cats })),
           catchError((error) => of(loadCatsFailure({ error })))
         )
@@ -35,6 +38,18 @@ export class CatEffects {
         this.catService.loadBreeds().pipe(
           map((breeds) => loadBreedsSuccess({ breeds })),
           catchError((error) => of(loadBreedsFailure({ error })))
+        )
+      )
+    )
+  );
+
+  searchCats$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(searchCats),
+      mergeMap(({ selectedBreeds, count }) =>
+        this.catService.searchCats(selectedBreeds, count).pipe(
+          map((cats) => searchCatsSuccess({ cats })),
+          catchError((error) => of(searchCatsFailure({ error })))
         )
       )
     )
